@@ -1,0 +1,78 @@
+@import './breakpoints.scss';
+
+@mixin grid($method: 'inline-block', $align: middle, $font-size: 12px, $align-content: stretch, $justify-content: center, $flex-wrap: nowrap, $flex-direction: row) {
+    @if $method == 'table' {
+        display: table;
+
+        > * {
+            display: table-row;
+            font-size: $font-size;
+
+            > * {
+                display: table-cell;
+                vertical-align: $align;
+            }
+        }
+    } @else if $method == 'flex' {
+        display: flex;
+
+        @if $align == middle {
+            align-items: center;
+        } @else {
+            align-items: $align;
+        }
+        align-content: $align-content;
+        justify-content: $justify-content;
+        flex-wrap: $flex-wrap;
+        flex-direction: $flex-direction;
+    } @else if $method == 'float' {
+        float: left;
+    } @else {
+        font-size: 0;
+
+        > * {
+            display: inline-block;
+            vertical-align: $align;
+            font-size: $font-size;
+        }
+    }
+}
+
+@mixin grid-size($single: 1, $of: 2, $gutter: 0, $media-size, $media-type) {
+    width: calc(100% / #{$of} * $single);
+    margin-left: $gutter;
+    margin-right: $gutter;
+    margin-top: $gutter;
+
+    @if variable-exists($media-size) {
+        @include breakpoint($media-size, $media-type) {
+            @for $i from 1 through $of {
+                &:nth-child(#{$i}) {
+                    margin-top: 0;
+                }
+            }
+
+            &:nth-child(#{$of}n + 1) {
+                margin-left: 0;
+            }
+
+            &:nth-child(#{$of}n) {
+                margin-right: 0;
+            }
+        }
+    } @else {
+        @for $i from 1 through $of {
+            &:nth-child(#{$i}) {
+                margin-top: 0;
+            }
+        }
+
+        &:nth-child(#{$of}n + 1) {
+            margin-left: 0;
+        }
+
+        &:nth-child(#{$of}n) {
+            margin-right: 0;
+        }
+    }
+}

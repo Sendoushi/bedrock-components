@@ -1,0 +1,41 @@
+@mixin modal($close-size: 1em, $close-color: currentColor, $animation-time: 0.15s, $animation-ease: ease-out) {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transition: opacity $animation-time $animation-ease;
+    pointer-events: none;
+    text-align: center;
+
+    &.is-in {
+        position: fixed;
+        bottom: 0;
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 1000;
+    }
+
+    .modal__content {
+        position: relative;
+    }
+
+    .modal__close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
+        cursor: pointer;
+
+        .icon__wrapper {
+            .icon {
+                width: $close-size;
+                height: $close-size;
+
+                > * {
+                    fill: $close-color;
+                }
+            }
+        }
+    }
+}

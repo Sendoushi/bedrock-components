@@ -1,0 +1,53 @@
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+@mixin list($not-selector: ":not(.not-general)", $padding-top: 4px, $padding-left: 22px, $margin-top: 30px, $marker-size: 7px, $marker-color: currentColor, $font-size: inherit) {
+    ul#{$not-selector},
+    ol#{$not-selector} {
+        li {
+            position: relative;
+            padding-top: $padding-top;
+            padding-left: $padding-left;
+            font-size: $font-size;
+
+            &::before {
+                content: "";
+                display: block;
+                position: absolute;
+                left: 0;
+                top: 0.3em;
+            }
+
+            + li {
+                margin-top: $margin-top;
+            }
+        }
+    }
+
+    ul#{$not-selector} {
+        li {
+            &::before {
+                width: $marker-size;
+                height: $marker-size;
+                background-color: $marker-color;
+            }
+        }
+    }
+
+    ol#{$not-selector} {
+        counter-increment: ol-li-item;
+
+        li {
+
+            &::before {
+                content: counter(ol-li-item) ".";
+                font-size: 1em;
+                color: $marker-color;
+            }
+        }
+    }
+}

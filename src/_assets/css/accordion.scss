@@ -1,0 +1,128 @@
+@import './breakpoints.scss';
+
+@mixin accordion-anchor($width: auto, $height: auto, $icon-color: currentColor, $icon-size: 1em) {
+    &,
+    .accordion__title,
+    .accordion__anchor__wrapper {
+        position: relative;
+    }
+
+    .accordion__anchor {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: block;
+        width: $width;
+        height: $height;
+        z-index: 10;
+        cursor: pointer;
+    }
+
+    .accordion__anchor {
+        .icon__wrapper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .icon {
+            position: absolute;
+            top: calc(50% - #{$icon-size} / 2);
+            right: 0;
+            width: $icon-size;
+            height: $icon-size;
+
+            > * {
+                fill: $icon-color;
+            }
+        }
+
+        .icon---minus {
+            display: block;
+        }
+
+        .icon--plus {
+            display: none;
+        }
+    }
+
+    &.is-out {
+        .accordion__anchor {
+            .icon--minus {
+                display: none;
+            }
+
+            .icon--plus {
+                display: block;
+            }
+        }
+    }
+}
+
+@mixin accordion-content($animation-time: 0.15s, $animation-ease: ease-out) {
+    .accordion__content {
+        overflow: hidden;
+        transition: max-height $animation-time $animation-ease, padding $animation-time $animation-ease;
+
+        > p {
+            &:first-child {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+@mixin accordion($anchor-width: auto, $anchor-height: auto, $anchor-icon-color: currentColor, $anchor-icon-size: 1em, $animation-time: 0.15s, $animation-ease: ease-out) {
+    @include accordion-content($animation-time, $animation-ease);
+    @include accordion-anchor($anchor-width, $anchor-height, $anchor-icon-color, $anchor-icon-size);
+}
+
+@mixin accordion-resp($anchor-width: auto, $anchor-height: auto, $anchor-icon-color: currentColor, $anchor-icon-size: 1em, $animation-time: 0.15s, $animation-ease: ease-out) {
+
+    .accordion {
+        @include accordion($anchor-width, $anchor-height, $anchor-icon-color, $anchor-icon-size, $animation-time, $animation-ease);
+    }
+
+    .accordion--tablet {
+        .accordion__anchor {
+            display: none;
+
+            @include breakpoint(medium) {
+                display: block;
+            }
+        }
+
+        .accordion__content {
+            @include breakpoint(medium, 'at-least') {
+                max-height: none !important;
+            }
+        }
+
+        @include breakpoint(medium) {
+            @include accordion($anchor-width, $anchor-height, $anchor-icon-color, $anchor-icon-size, $animation-time, $animation-ease);
+        }
+    }
+
+    .accordion--mobile {
+        .accordion__anchor {
+            display: none;
+
+            @include breakpoint(small) {
+                display: block;
+            }
+        }
+
+        .accordion__content {
+            @include breakpoint(small, 'at-least') {
+                max-height: none !important;
+            }
+        }
+
+        @include breakpoint(small) {
+            @include accordion($anchor-width, $anchor-height, $anchor-icon-color, $anchor-icon-size, $animation-time, $animation-ease);
+        }
+    }
+}

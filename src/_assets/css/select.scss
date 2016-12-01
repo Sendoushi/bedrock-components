@@ -1,0 +1,117 @@
+@mixin select-options($padding: 5px, $border: 1px solid currentColor, $background: transparent, $text-color: currentColor) {
+    .select__options {
+        display: none;
+        position: absolute;
+        top: calc(100% - 1px);
+        left: 0;
+        min-width: 100%;
+        max-height: calc(#{$padding} * 6);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        white-space: nowrap;
+        border: $border;
+        background-color: $background;
+
+        overflow-y: auto;
+        z-index: 100;
+    }
+
+    .select__option {
+        display: block;
+        margin: 0;
+        padding: $padding;
+        background-color: $background;
+
+        & {
+            color: $text-color;
+        }
+
+        &:hover {
+            color: $text-color;
+            background-color: $background;
+        }
+    }
+}
+
+@mixin select-values($padding: 5px, $border: 1px solid currentColor, $background: transparent, $placeholder-color: currentColor) {
+    .select__blank {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: $background;
+    }
+
+    .select__placeholder,
+    .select__value {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: $padding;
+        line-height: 1;
+        border: $border;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .select__placeholder {
+        color: $placeholder-color;
+    }
+
+    .select__value {
+        &:after {
+            content: "»";
+            position: absolute;
+            display: block;
+            top: calc(50% - #{$padding} / 2 + 1px);
+            right: $padding;
+            font-size: $padding;
+            transform: rotate(90deg);
+        }
+    }
+}
+
+@mixin select($height: 100%, $padding: 5px, $font-size: inherit, $border: 1px solid currentColor, $background: transparent, $text-color: currentColor, $placeholder-color: currentColor) {
+    select {
+        width: 100%;
+    }
+
+    @include select-options($padding, $border, $background, $text-color);
+    @include select-values($padding, $border, $background, $placeholder-color);
+
+    .select__wrap {
+        position: relative;
+        height: $height;
+        font-size: $font-size;
+        background-color: $background;
+        color: $text-color;
+        text-align: left;
+        cursor: pointer;
+
+        select {
+            visibility: hidden;
+        }
+
+        & + .select__blank {
+            display: none;
+        }
+
+        &.is-set .select__placeholder {
+            display: none;
+        }
+
+        &.is-active {
+            border-bottom: 0;
+
+            .select__options {
+                display: block;
+            }
+        }
+    }
+}
