@@ -2,7 +2,7 @@
     input[type="checkbox"].checkbox-custom {
         display: none;
 
-        &:checked + label.checkbox-custom .checkbox-custom__button:before {
+        &:checked + label.checkbox-custom .checkbox-custom__button::before {
             display: block;
         }
     }
@@ -15,7 +15,7 @@
             font-size: $font-size;
         }
 
-        & .checkbox-custom__button {
+        .checkbox-custom__button {
             width: $size;
             height: $size;
             margin-right: $size / 2;
@@ -60,7 +60,7 @@
     input[type="radio"].radio-custom {
         display: none;
 
-        &:checked + label.radio-custom .radio-custom__button:before {
+        &:checked + label.radio-custom .radio-custom__button::before {
             display: block;
         }
     }
@@ -73,7 +73,7 @@
             font-size: $font-size;
         }
 
-        & .radio-custom__button {
+        .radio-custom__button {
             width: $size;
             height: $size;
             margin-right: $size / 2;

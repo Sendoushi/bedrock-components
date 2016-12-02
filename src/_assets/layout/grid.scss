@@ -1,7 +1,7 @@
-@import './breakpoints.scss';
+@import "./breakpoints.scss";
 
-@mixin grid($method: 'inline-block', $align: middle, $font-size: 12px, $align-content: stretch, $justify-content: center, $flex-wrap: nowrap, $flex-direction: row) {
-    @if $method == 'table' {
+@mixin grid($method: "inline-block", $align: middle, $font-size: 12px, $align-content: stretch, $justify-content: center, $flex-wrap: nowrap, $flex-direction: row) {
+    @if $method == "table" {
         display: table;
 
         > * {
@@ -13,21 +13,30 @@
                 vertical-align: $align;
             }
         }
-    } @else if $method == 'flex' {
+    }
+
+    @else if $method == "flex" {
         display: flex;
 
         @if $align == middle {
             align-items: center;
-        } @else {
+        }
+
+        @else {
             align-items: $align;
         }
+
         align-content: $align-content;
         justify-content: $justify-content;
         flex-wrap: $flex-wrap;
         flex-direction: $flex-direction;
-    } @else if $method == 'float' {
+    }
+
+    @else if $method == "float" {
         float: left;
-    } @else {
+    }
+
+    @else {
         font-size: 0;
 
         > * {
@@ -60,7 +69,9 @@
                 margin-right: 0;
             }
         }
-    } @else {
+    }
+
+    @else {
         @for $i from 1 through $of {
             &:nth-child(#{$i}) {
                 margin-top: 0;

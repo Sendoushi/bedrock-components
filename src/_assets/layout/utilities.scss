@@ -1,3 +1,5 @@
+@import "./breakpoints.scss";
+
 /* Clearfix for floats */
 .clearfix {
     &::before,
@@ -53,6 +55,44 @@
 .disable-scroll {
     overflow-y: hidden;
 }
+
+// -------------------------------
+// Media related
+
+.is-mobile {
+    display: none;
+
+    @include breakpoint(small) {
+        display: block;
+    }
+}
+
+.is-tablet {
+    display: none;
+
+    @include breakpoint(medium, "between") {
+        display: block;
+    }
+}
+
+.is-desktop {
+    display: none;
+
+    @include breakpoint(large, "between") {
+        display: block;
+    }
+}
+
+.is-over {
+    display: none;
+
+    @include breakpoint(huge, "at-least") {
+        display: block;
+    }
+}
+
+// -------------------------------
+// Ratio
 
 @mixin ratio($percent: 100%) {
     display: inline-block;

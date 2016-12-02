@@ -1,38 +1,31 @@
-$breakpoint-tiny: 320px;
-$breakpoint-small: 767px;
-$breakpoint-medium: 959px;
-$breakpoint-large: 1240px;
-$breakpoint-huge: 1799px;
+@import "../base/settings.scss";
 
-$padding-huge: 15px;
-$padding-large: 15px;
-$padding-medium: 20px;
-$padding-small: 10px;
-
-/* stylelint-disable media-feature-no-missing-punctuation  */
+/* stylelint-disable */
 $breakpoints: (
-  'tiny':   ( max-width:  $breakpoint-tiny ),
-  'small':  ( max-width:  $breakpoint-small ),
-  'medium': ( max-width:  $breakpoint-medium ),
-  'large':  ( max-width: $breakpoint-large ),
-  'huge':   ( max-width: $breakpoint-huge )
+    "tiny":   ( max-width:  $breakpoint-tiny ),
+    "small":  ( max-width:  $breakpoint-small ),
+    "medium": ( max-width:  $breakpoint-medium ),
+    "large":  ( max-width: $breakpoint-large ),
+    "huge":   ( max-width: $breakpoint-huge )
 );
 
 $breakpoints-at-least: (
-  'tiny':   ( min-width:  $breakpoint-tiny + 1 ),
-  'small':  ( min-width:  $breakpoint-small + 1 ),
-  'medium': ( min-width:  $breakpoint-medium + 1 ),
-  'large':  ( min-width: $breakpoint-large + 1 ),
-  'huge':   ( min-width: $breakpoint-huge + 1 )
+    "tiny":   ( min-width:  $breakpoint-tiny + 1 ),
+    "small":  ( min-width:  $breakpoint-small + 1 ),
+    "medium": ( min-width:  $breakpoint-medium + 1 ),
+    "large":  ( min-width: $breakpoint-large + 1 ),
+    "huge":   ( min-width: $breakpoint-huge + 1 )
 );
 
 $breakpoints-between: (
-  'tiny':    ( max-width:  $breakpoint-tiny ),
-  'small':   ( min-width:  $breakpoint-tiny + 1 ) and ( max-width:  $breakpoint-small ),
-  'medium':  ( min-width:  $breakpoint-small + 1 ) and ( max-width:  $breakpoint-medium ),
-  'large':   ( min-width:  $breakpoint-medium + 1 ) and ( max-width: $breakpoint-large ),
-  'huge':    ( min-width: $breakpoint-large + 1 ) and ( max-width: $breakpoint-huge )
+    "tiny":    ( max-width:  $breakpoint-tiny ),
+    "small":   ( min-width:  $breakpoint-tiny + 1 ) and ( max-width:  $breakpoint-small ),
+    "medium":  ( min-width:  $breakpoint-small + 1 ) and ( max-width:  $breakpoint-medium ),
+    "large":   ( min-width:  $breakpoint-medium + 1 ) and ( max-width: $breakpoint-large ),
+    "huge":    ( min-width: $breakpoint-large + 1 ) and ( max-width: $breakpoint-huge )
 );
+/* stylelint-enable  */
+/* stylelint-disable media-feature-no-missing-punctuation  */
 
 /// Generates media queries from breakpoints
 ///
@@ -44,66 +37,79 @@ $breakpoints-between: (
 ///        }
 ///    }
 
-@mixin breakpoint($name, $type: '') {
+@mixin breakpoint($name, $type: "") {
     @if map-has-key($breakpoints, $name) {
-        @if $type == 'between' {
+        @if $type == "between" {
             @media #{inspect(map-get($breakpoints-between, $name))} {
                 @content;
             }
-        } @else if $type == 'at-least' {
+        }
+
+        @else if $type == "at-least" {
             @media #{inspect(map-get($breakpoints-at-least, $name))} {
                 @content;
             }
-        } @else {
+        }
+
+        @else {
             @media #{inspect(map-get($breakpoints, $name))} {
                 @content;
             }
         }
-    } @else {
+    }
+
+    @else {
         @warn "Couldn't find a breakpoint named `#{$name}`.";
     }
 }
 
-@mixin wrapper($type: 'break') {
+@mixin wrapper($type: "break") {
     .wrapper {
-        @if $type == 'break' {
+        @if $type == "break" {
             width: $breakpoint-large;
-        } @else {
+        }
+
+        @else {
             width: 100%;
             max-width: $breakpoint-huge;
         }
+
         margin: 0 auto;
         padding-left: $padding-huge;
         padding-right: $padding-huge;
 
         @include breakpoint(large) {
-            @if $type == 'break' {
+            @if $type == "break" {
                 width: $breakpoint-medium;
             }
+
             padding-left: $padding-large;
             padding-right: $padding-large;
         }
 
         @include breakpoint(medium) {
-            @if $type == 'break' {
+            @if $type == "break" {
                 width: $breakpoint-small;
             }
+
             padding-left: $padding-medium;
             padding-right: $padding-medium;
         }
 
         @include breakpoint(small) {
-            @if $type == 'break' {
+            @if $type == "break" {
                 width: $breakpoint-tiny;
             }
+
             padding-left: $padding-small;
             padding-right: $padding-small;
         }
 
         .wrapper {
-            @if $type == 'break' {
+            @if $type == "break" {
                 width: auto;
             }
+
             padding-left: 0;
             padding-right: 0;
         }

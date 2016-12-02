@@ -1,4 +1,4 @@
-@import './breakpoints.scss';
+@import "../layout/breakpoints.scss";
 
 @mixin accordion-anchor($width: auto, $height: auto, $icon-color: currentColor, $icon-size: 1em) {
     &,
@@ -81,7 +81,6 @@
 }
 
 @mixin accordion-resp($anchor-width: auto, $anchor-height: auto, $anchor-icon-color: currentColor, $anchor-icon-size: 1em, $animation-time: 0.15s, $animation-ease: ease-out) {
-
     .accordion {
         @include accordion($anchor-width, $anchor-height, $anchor-icon-color, $anchor-icon-size, $animation-time, $animation-ease);
     }
@@ -96,7 +95,7 @@
         }
 
         .accordion__content {
-            @include breakpoint(medium, 'at-least') {
+            @include breakpoint(medium, "at-least") {
                 max-height: none !important;
             }
         }
@@ -116,7 +115,7 @@
         }
 
         .accordion__content {
-            @include breakpoint(small, 'at-least') {
+            @include breakpoint(small, "at-least") {
                 max-height: none !important;
             }
         }

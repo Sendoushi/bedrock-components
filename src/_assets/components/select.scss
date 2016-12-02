@@ -12,7 +12,6 @@
         white-space: nowrap;
         border: $border;
         background-color: $background;
-
         overflow-y: auto;
         z-index: 100;
     }
@@ -22,10 +21,7 @@
         margin: 0;
         padding: $padding;
         background-color: $background;
-
-        & {
-            color: $text-color;
-        }
+        color: $text-color;
 
         &:hover {
             color: $text-color;
@@ -54,7 +50,6 @@
         padding: $padding;
         line-height: 1;
         border: $border;
-
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -65,7 +60,7 @@
     }
 
     .select__value {
-        &:after {
+        &::after {
             content: "»";
             position: absolute;
             display: block;
@@ -98,7 +93,7 @@
             visibility: hidden;
         }
 
-        & + .select__blank {
+        + .select__blank {
             display: none;
         }
 
