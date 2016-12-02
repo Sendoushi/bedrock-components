@@ -1,7 +1,9 @@
-# Bedrock
+# Bedrock: Components
 
 Library intends to be just a simple top layer for various kinds of projects. From simple to complex ones.
 It isn't a new framework, just a set of utils to work with.
+
+[![Build Status](https://travis-ci.org/Sendoushi/bedrock-components.svg?branch=master)](https://travis-ci.org/Sendoushi/bedrock-components)
 
 The api documentation is **[here](doc/API.md)**.
 
