@@ -38,6 +38,10 @@ function onScroll(comp) {
         (top < scrollTo + comp.gutter) && items.push({ top: top, el: el });
     });
 
+    // No need to go further...
+    if (!items.length) { return; }
+
+    // Find the right item
     item = items.reduce(function (a, b) {
         return (scrollTo - a.top) > (scrollTo - b.top) ? b : a;
     });
