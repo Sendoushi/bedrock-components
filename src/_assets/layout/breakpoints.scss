@@ -1,10 +1,8 @@
-@import "../base/settings.scss";
-
 /* stylelint-disable */
 $breakpoints: (
-    "tiny":   ( max-width:  $breakpoint-tiny ),
-    "small":  ( max-width:  $breakpoint-small ),
-    "medium": ( max-width:  $breakpoint-medium ),
+    "tiny":   ( max-width: $breakpoint-tiny ),
+    "small":  ( max-width: $breakpoint-small ),
+    "medium": ( max-width: $breakpoint-medium ),
     "large":  ( max-width: $breakpoint-large ),
     "huge":   ( max-width: $breakpoint-huge )
 );

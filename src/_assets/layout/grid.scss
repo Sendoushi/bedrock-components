@@ -1,5 +1,3 @@
-@import "./breakpoints.scss";
-
 @mixin grid($method: "inline-block", $align: middle, $font-size: 12px, $align-content: stretch, $justify-content: center, $flex-wrap: nowrap, $flex-direction: row) {
     @if $method == "table" {
         display: table;

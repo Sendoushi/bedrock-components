@@ -1,5 +1,3 @@
-@import "../layout/breakpoints.scss";
-
 @mixin accordion-anchor($width: auto, $height: auto, $icon-color: currentColor, $icon-size: 1em) {
     &,
     .accordion__title,
