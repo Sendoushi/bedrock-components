@@ -1,26 +1,26 @@
 /* stylelint-disable */
 $breakpoints: (
-    "tiny":   ( max-width: $breakpoint-tiny ),
-    "small":  ( max-width: $breakpoint-small ),
-    "medium": ( max-width: $breakpoint-medium ),
-    "large":  ( max-width: $breakpoint-large ),
-    "huge":   ( max-width: $breakpoint-huge )
+    "tiny":   "(max-width: $breakpoint-tiny)",
+    "small":  "(max-width: $breakpoint-small)",
+    "medium": "(max-width: $breakpoint-medium)",
+    "large":  "(max-width: $breakpoint-large)",
+    "huge":   "(max-width: $breakpoint-huge)"
 );
 
 $breakpoints-at-least: (
-    "tiny":   ( min-width:  $breakpoint-tiny + 1 ),
-    "small":  ( min-width:  $breakpoint-small + 1 ),
-    "medium": ( min-width:  $breakpoint-medium + 1 ),
-    "large":  ( min-width: $breakpoint-large + 1 ),
-    "huge":   ( min-width: $breakpoint-huge + 1 )
+    "tiny":   "(min-width:  $breakpoint-tiny + 1)",
+    "small":  "(min-width:  $breakpoint-small + 1)",
+    "medium": "(min-width:  $breakpoint-medium + 1)",
+    "large":  "(min-width: $breakpoint-large + 1)",
+    "huge":   "(min-width: $breakpoint-huge + 1)"
 );
 
 $breakpoints-between: (
-    "tiny":    ( max-width:  $breakpoint-tiny ),
-    "small":   ( min-width:  $breakpoint-tiny + 1 ) and ( max-width:  $breakpoint-small ),
-    "medium":  ( min-width:  $breakpoint-small + 1 ) and ( max-width:  $breakpoint-medium ),
-    "large":   ( min-width:  $breakpoint-medium + 1 ) and ( max-width: $breakpoint-large ),
-    "huge":    ( min-width: $breakpoint-large + 1 ) and ( max-width: $breakpoint-huge )
+    "tiny":    "( max-width: $breakpoint-tiny )",
+    "small":   "( min-width: $breakpoint-tiny + 1 ) and ( max-width:  $breakpoint-small)",
+    "medium":  "(min-width: $breakpoint-small + 1 ) and ( max-width:  $breakpoint-medium)",
+    "large":   "(min-width: $breakpoint-medium + 1 ) and ( max-width: $breakpoint-large)",
+    "huge":    "( min-width: $breakpoint-large + 1 ) and ( max-width: $breakpoint-huge )"
 );
 /* stylelint-enable  */
 /* stylelint-disable media-feature-no-missing-punctuation  */
