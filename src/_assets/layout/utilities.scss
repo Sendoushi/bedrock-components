@@ -68,7 +68,7 @@
         display: none;
     }
 
-    @include breakpoint(large, "at-least") {
+    @include breakpoint(medium, "at-least") {
         display: none;
     }
 }
