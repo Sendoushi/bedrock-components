@@ -58,23 +58,47 @@
 // Media related
 
 .is-mobile {
-    @include breakpoint(small, "at-least") {
-        display: none !important;
+    &:not(.is-tablet):not(.is-desktop) {
+        @include breakpoint(small, "at-least") {
+            display: none !important;
+        }
     }
 }
 
 .is-tablet {
-    @include breakpoint(small) {
-        display: none !important;
-    }
+    &:not(.is-mobile):not(.is-desktop) {
+        @include breakpoint(small) {
+            display: none !important;
+        }
 
+        @include breakpoint(medium, "at-least") {
+            display: none !important;
+        }
+    }
+}
+
+.is-desktop {
+    &:not(.is-mobile):not(.is-tablet) {
+        @include breakpoint(medium) {
+            display: none !important;
+        }
+    }
+}
+
+.is-mobile.is-tablet:not(.is-desktop) {
     @include breakpoint(medium, "at-least") {
         display: none !important;
     }
 }
 
-.is-desktop {
-    @include breakpoint(medium) {
+.is-mobile.is-desktop:not(.is-tablet) {
+    @include breakpoint(medium, "between") {
+        display: none !important;
+    }
+}
+
+.is-tablet.is-desktop:not(.is-mobile) {
+    @include breakpoint(small) {
         display: none !important;
     }
 }
