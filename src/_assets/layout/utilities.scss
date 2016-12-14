@@ -58,34 +58,30 @@
 // Media related
 
 .is-mobile {
-    display: none;
-
-    @include breakpoint(small) {
-        display: block;
+    @include breakpoint(small, "at-least") {
+        display: none;
     }
 }
 
 .is-tablet {
-    display: none;
+    @include breakpoint(small) {
+        display: none;
+    }
 
-    @include breakpoint(medium, "between") {
-        display: block;
+    @include breakpoint(large, "at-least") {
+        display: none;
     }
 }
 
 .is-desktop {
-    display: none;
-
-    @include breakpoint(large, "between") {
-        display: block;
+    @include breakpoint(medium) {
+        display: none;
     }
 }
 
 .is-over {
-    display: none;
-
-    @include breakpoint(huge, "at-least") {
-        display: block;
+    @include breakpoint(large) {
+        display: none;
     }
 }
 
