@@ -320,11 +320,11 @@ function destroy(el, newEl) {
 */
 function init(comp) {
     var targetClose = comp.targetClose;
-    var selectValue = getInitialValue(comp);
+    var selectValue = getInitialValue(comp.el);
 
     // Cache for later use
     comp.all = !!targetClose ? $(targetClose) : null;
-    comp.newEl = setLayout(comp);
+    comp.newEl = setLayout(comp.el);
 
     // Set events
     setEvents(comp);
