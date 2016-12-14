@@ -187,6 +187,7 @@ function setValue(el, val, isFirst, force) {
     }
 
     valEl.attr('data-value', val);
+    valEl.attr('data-text', itemText);
     valEl.text(itemText);
 
     if (!val || val === '' || !itemText || itemText === '') {
