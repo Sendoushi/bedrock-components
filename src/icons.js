@@ -1,7 +1,7 @@
 /* eslint-disable strict */'use strict';/* eslint-enable strict */
 
 var doT = require('dot');
-var component = require('bedrock/component.js');
+var component = require('bedrock/src/component.js');
 
 var DEFAULTS = {
     rawTmpl: '',
@@ -19,7 +19,7 @@ function render(comp) {
     comp = component.render(comp, {});
 
     return comp;
-};
+}
 
 /**
  * Initializes
@@ -37,7 +37,7 @@ function init(comp) {
     comp.rawTmpl = doT.template(rawTmpl);
 
     return comp;
-};
+}
 
 // -------------------------------------------
 // EXPORT

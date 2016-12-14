@@ -1,8 +1,8 @@
 /* eslint-disable strict */'use strict';/* eslint-enable strict */
 
 var $ = require('jquery');
-var component = require('bedrock/component.js');
-var mailbox = require('bedrock/mailbox.js');
+var component = require('bedrock/src/component.js');
+var mailbox = require('bedrock/src/mailbox.js');
 
 var DEFAULTS = {
     classes: {

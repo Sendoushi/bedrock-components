@@ -3,7 +3,7 @@
 
 var $ = require('jquery');
 var deepMixIn = require('mout/object/deepMixIn.js');
-var component = require('bedrock/component.js');
+var component = require('bedrock/src/component.js');
 var req = require('bedrock/utils/req.js');
 
 var DEFAULTS = {

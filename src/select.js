@@ -3,7 +3,7 @@
 // TODO: We should convert this better
 
 var $ = require('jquery');
-var component = require('bedrock/component.js');
+var component = require('bedrock/src/component.js');
 
 var DEFAULTS = {
     targetClose: null,
