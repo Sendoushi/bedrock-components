@@ -59,29 +59,29 @@
 
 .is-mobile {
     @include breakpoint(small, "at-least") {
-        display: none;
+        display: none !important;
     }
 }
 
 .is-tablet {
     @include breakpoint(small) {
-        display: none;
+        display: none !important;
     }
 
     @include breakpoint(medium, "at-least") {
-        display: none;
+        display: none !important;
     }
 }
 
 .is-desktop {
     @include breakpoint(medium) {
-        display: none;
+        display: none !important;
     }
 }
 
 .is-over {
     @include breakpoint(large) {
-        display: none;
+        display: none !important;
     }
 }
 
