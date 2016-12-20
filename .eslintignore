@@ -1,4 +1,3 @@
-outdatedbrowser.js
 **/*.ico
 **/*.png
 **/*.gif
@@ -9,3 +8,7 @@ outdatedbrowser.js
 node_modules
 vendor
 build/*
+dist/*
+
+*.flow.js
+outdatedbrowser.js

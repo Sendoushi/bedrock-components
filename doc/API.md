@@ -11,4 +11,4 @@ Sorry... Still have to complete this better!
 
 #### List of provided components utils
 
-- [outdatedbrowser](src/components/utils/outdatedbrowser.js)
+- [outdatedbrowser](src/utils/outdatedbrowser.js)

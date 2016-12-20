@@ -1,12 +1,12 @@
-/* eslint-disable strict */'use strict';/* eslint-enable strict */
+'use strict';
 /* global Promise */
 
-var $ = require('jquery');
-var deepMixIn = require('mout/object/deepMixIn.js');
-var component = require('bedrock/src/component.js');
-var req = require('bedrock/utils/req.js');
+import $ from 'jquery';
+import axios from 'axios';
+import component from 'bedrock/src/component.js';
+import merge from 'lodash/merge.js';
 
-var DEFAULTS = {
+const DEFAULTS = {
     input: null,
     tmpl: '',
     keyThrottle: 250,
@@ -48,7 +48,7 @@ require('es6-promise').polyfill();
  * @param  {string} query
  * @return {Boolean}
  */
-function isQuery(val, query) {
+const isQuery = (val, query) => {
     if (typeof val !== 'string') {
         return false;
     } else if (query === '') {
@@ -58,8 +58,8 @@ function isQuery(val, query) {
     val = val.toLowerCase();
     query = query.toLowerCase();
 
-    return val.replace(query, '') !== val;
-}
+    return val.indexOf(query) !== -1;
+};
 
 /**
  * Request external data
@@ -68,9 +68,7 @@ function isQuery(val, query) {
  * @param  {string} query
  * @return {promise}
  */
-function reqExternalData(comp, url, query) {
-    return req.get(url.replace(comp.queryParam, query), 'GET');
-}
+const reqExternalData = (comp, url, query) => axios.get(url.replace(comp.queryParam, query));
 
 /**
  * Requester internal data
@@ -79,16 +77,15 @@ function reqExternalData(comp, url, query) {
  * @param  {string} query
  * @return {promise}
  */
-function reqInternalData(comp, data, query) {
-    var newData = data.filter(function (val) {
-        var keys = Object.keys(val);
-        var i;
+const reqInternalData = (comp, data, query) => {
+    const newData = data.filter((val) => {
+        let keys = Object.keys(val);
 
         // Check for the query in the various types...
         if (isQuery(val, query)) {
             return true;
         } else if (typeof val === 'object' && val.hasOwnProperty('length')) {
-            for (i = 0; i < val.length; i += 1) {
+            for (let i = 0; i < val.length; i += 1) {
                 if (isQuery(val[i], query)) {
                     return true;
                 }
@@ -96,7 +93,7 @@ function reqInternalData(comp, data, query) {
         } else if (typeof val === 'object') {
             keys = Object.keys(val);
 
-            for (i = 0; i < keys.length; i += 1) {
+            for (let i = 0; i < keys.length; i += 1) {
                 if (isQuery(val[keys[i]], query)) {
                     return true;
                 }
@@ -104,36 +101,29 @@ function reqInternalData(comp, data, query) {
         }
     });
 
-    var promise = new Promise(function (resolve) {
-        resolve(newData);
-    });
+    const promise = new Promise(resolve => resolve(newData));
 
     return promise;
-}
+};
 
 /**
  * Gets render data
  * @param  {object} comp
  * @return {object}
  */
-function getRenderData(comp) {
-    var data = [];
-    var source;
-    var i;
+const getRenderData = (comp) => {
+    const data = [];
 
     // Go through the sources
-    for (i = 0; i < comp.sources.length; i += 1) {
-        source = comp.sources[i];
+    for (let i = 0; i < comp.sources.length; i += 1) {
+        const source = comp.sources[i];
 
         if (!source.reqData || !source.reqData.length) {
             continue;
         }
 
         // Lets create the new object
-        data.push(deepMixIn({}, {
-            sourceIndex: i,
-            data: source.reqData
-        }, source));
+        data.push(merge({}, { sourceIndex: i, data: source.reqData }, source));
     }
 
     // Are there no results?
@@ -151,26 +141,26 @@ function getRenderData(comp) {
         query: comp.query,
         err: comp.err
     };
-}
+};
 
 /**
  * Close
  * @param  {object} comp
  * @return {object}
  */
-function close(comp) {
+const close = (comp) => {
     comp.el.removeClass(comp.classes.isActive);
     comp.input.trigger(comp.events.close);
 
     return comp;
-}
+};
 
 /**
  * Handles item select
  * @param  {object} comp
  * @param  {event} evt
  */
-function onItem(comp, evt) {
+const onItem = (comp, evt) => {
     comp.throttler && clearTimeout(comp.throttler);
 
     evt.stopPropagation();
@@ -180,47 +170,47 @@ function onItem(comp, evt) {
     if (!evt.defaultPrevented) {
         close(comp);
     }
-}
+};
 
 /**
  * Handles show all click event
  * @param  {object} comp
  * @param  {event} evt
  */
-function onShowAll(comp, evt) {
+const onShowAll = (comp, evt) => {
     comp.throttler && clearTimeout(comp.throttler);
 
     evt.preventDefault();
     evt.stopPropagation();
     comp.el.addClass(comp.classes.hasAll);
-}
+};
 
 /**
  * Handles show all click event
  * @param  {object} comp
  * @param  {event} evt
  */
-function onShowLess(comp, evt) {
+const onShowLess = (comp, evt) => {
     comp.throttler && clearTimeout(comp.throttler);
 
     evt.preventDefault();
     evt.stopPropagation();
     comp.el.removeClass(comp.classes.hasAll);
-}
+};
 
 /**
  * Opens
  * @param  {object} comp
  * @return {object}
  */
-function open(comp) {
-    var tmpl = comp.tmpl(getRenderData(comp));
-    var oldClasses = [
+const open = (comp) => {
+    const tmpl = comp.tmpl(getRenderData(comp));
+    const oldClasses = [
         comp.classes.hasError,
         comp.classes.hasErrorMinChars,
         comp.classes.hasErrorNoResults
     ];
-    var newClasses = [
+    const newClasses = [
         (comp.err ? comp.err : ''),
         comp.classes.isActive
     ];
@@ -232,20 +222,20 @@ function open(comp) {
     comp.el.addClass(newClasses.join(' '));
 
     // Cache items
-    comp.els.items = comp.el.find('.' + comp.classes.item);
-    comp.els.showAll = comp.el.find('.' + comp.classes.showAll);
-    comp.els.showLess = comp.el.find('.' + comp.classes.showLess);
+    comp.els.items = comp.el.find(`.${comp.classes.item}`);
+    comp.els.showAll = comp.el.find(`.${comp.classes.showAll}`);
+    comp.els.showLess = comp.el.find(`.${comp.classes.showLess}`);
 
     // Set items event
-    comp.els.items.on('click', onItem.bind(null, comp));
-    comp.els.showAll.on('click', onShowAll.bind(null, comp));
-    comp.els.showLess.on('click', onShowLess.bind(null, comp));
+    comp.els.items.on('click.completer', onItem.bind(null, comp));
+    comp.els.showAll.on('click.completer', onShowAll.bind(null, comp));
+    comp.els.showLess.on('click.completer', onShowLess.bind(null, comp));
 
     // Inform
     comp.input.trigger(comp.events.open);
 
     return comp;
-}
+};
 
 /**
  * Updates data
@@ -254,14 +244,12 @@ function open(comp) {
  * @param  {boolean} setOpen
  * @return {promise}
  */
-function updateData(comp, query, setOpen) {
-    var promise = new Promise(function (resolve, reject) {
-        var promiseAll = 0;
-        var promiseCount = 0;
-        var promiseRejected;
-        var promiseSource;
-        var source;
-        var i;
+const updateData = (comp, query, setOpen) => {
+    const promise = new Promise((resolve, reject) => {
+        let promiseAll = 0;
+        let promiseCount = 0;
+        let promiseRejected;
+        let promiseSource;
 
         // Reset variables
         comp.err = null;
@@ -276,8 +264,8 @@ function updateData(comp, query, setOpen) {
         }
 
         // Lets go through sources
-        for (i = 0; i < comp.sources.length; i += 1) {
-            source = comp.sources[i];
+        for (let i = 0; i < comp.sources.length; i += 1) {
+            const source = comp.sources[i];
 
             if (promiseRejected) {
                 break;
@@ -290,7 +278,7 @@ function updateData(comp, query, setOpen) {
                 promiseSource = reqInternalData(comp, source.data, query);
             }
 
-            /* eslint-disable no-loop-func */
+            /* eslint-disable no-loop-func, prefer-arrow-callback */
             promiseSource.then(function (index, data) {
                 promiseCount += 1;
                 comp.sources[index].reqData = data;
@@ -299,12 +287,12 @@ function updateData(comp, query, setOpen) {
                     return resolve(comp);
                 }
             }.bind(null, i))
-            .catch(function (err) {
+            .catch((err) => {
                 promiseRejected = err;
                 comp.err = err;
                 return reject(comp);
             });
-            /* eslint-enable no-loop-func */
+            /* eslint-enable no-loop-func, prefer-arrow-callback */
         }
 
         // Maybe there weren't promises to comply
@@ -312,12 +300,12 @@ function updateData(comp, query, setOpen) {
             return resolve(comp);
         }
     })
-    .then(function (promiseComp) {
+    .then((promiseComp) => {
         setOpen && open(comp);
 
         return promiseComp;
     })
-    .catch(function (promiseComp) {
+    .catch((promiseComp) => {
         // The error will handeled by the template
         setOpen && open(comp);
 
@@ -325,29 +313,29 @@ function updateData(comp, query, setOpen) {
     });
 
     return promise;
-}
+};
 
 /**
  * Handles click event
  * @param  {object} comp
  * @param  {event} evt
  */
-function onClick(comp, evt) {
-    var val = comp.input.val();
+const onClick = (comp, evt) => {
+    const val = comp.input.val();
 
     evt.stopPropagation();
 
     if (!evt.defaultPrevented) {
         updateData(comp, val, true);
     }
-}
+};
 
 /**
  * Handles key event
  * @param  {object} comp
  * @param  {event} evt
  */
-function onKey(comp, evt) {
+const onKey = (comp, evt) => {
     evt.stopPropagation();
 
     // TODO: Need to solve the ENTER!!!
@@ -360,32 +348,29 @@ function onKey(comp, evt) {
     }
 
     comp.throttler && clearTimeout(comp.throttler);
-    comp.throttler = setTimeout(function () {
-        // Let click handle as usual
-        onClick(comp, evt);
-    }, comp.keyThrottle);
-}
+    comp.throttler = setTimeout(() => onClick(comp, evt), comp.keyThrottle);
+};
 
 /**
  * Handles blur event
  * @param  {object} comp
  * @param  {event} evt
  */
-function onBlur(comp, evt) {
+const onBlur = (comp, evt) => {
     comp.throttler && clearTimeout(comp.throttler);
-    comp.throttler = setTimeout(function () {
+    comp.throttler = setTimeout(() => {
         if (!evt.defaultPrevented) {
             comp.el.trigger(comp.events.blur, comp);
             close(comp);
         }
     }, comp.blurThrottle);
-}
+};
 
 /**
  * Destroys
  * @param  {object} comp
  */
-function destroy(comp) {
+const destroy = (comp) => {
     comp.throttler && clearTimeout(comp.throttler);
 
     comp.input.off('keyup.completer');
@@ -397,14 +382,14 @@ function destroy(comp) {
 
     comp.input.trigger(comp.events.destroy);
     component.destroy(comp);
-}
+};
 
 /**
  * Creates a modal
  * @param  {object} comp
  * @return {object}
  */
-function init(comp) {
+const init = (comp) => {
     // Input shouldn't have autocompletion from browser
     comp.input.attr('autocomplete', 'off');
 
@@ -417,7 +402,7 @@ function init(comp) {
             comp.input.on('click.completer', onClick.bind(null, comp));
         }
 
-        comp.el.on('click.completer', function (evt) {
+        comp.el.on('click.completer', (evt) => {
             comp.throttler && clearTimeout(comp.throttler);
 
             evt.preventDefault();
@@ -427,20 +412,20 @@ function init(comp) {
     }
 
     return comp;
-}
+};
 
 // --------------------------------
 // Export
 
-module.exports = {
-    init: function (el, data) {
-        var comp = component.getComp(data, DEFAULTS);
+export default {
+    init: (el, data) => {
+        let comp = component.getComp(data, DEFAULTS);
         comp = component.init(el, comp);
 
         // Elements need to be set out other way
-        comp.input = data.input || el.find('.' + comp.classes.input);
+        comp.input = data.input || el.find(`.${comp.classes.input}`);
 
-        return init(comp);
+        return (!el || !el.length) ? comp : init(comp);
     },
-    destroy: destroy
+    destroy
 };

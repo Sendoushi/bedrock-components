@@ -1,11 +1,12 @@
-/* eslint-disable strict */'use strict';/* eslint-enable strict */
+/* @flow *//* :: import type {Render, Init} from './_test/icons.flow.js' */
+'use strict';
 
-var doT = require('dot');
-var component = require('bedrock/src/component.js');
+import component from 'bedrock/src/component.js';
+import doT from 'dot';
 
-var DEFAULTS = {
+const DEFAULTS = {
     rawTmpl: '',
-    tmpl: function (comp, data) { return comp.rawTmpl(data); }
+    tmpl: (comp, data) => comp.rawTmpl(data)
 };
 
 // -----------------------------------------
@@ -15,20 +16,16 @@ var DEFAULTS = {
  * Renders the component
  * @param  {object} comp
  */
-function render(comp) {
-    comp = component.render(comp, {});
-
-    return comp;
-}
+const render/* :: :Render */ = (comp) => component.render(comp, {});
 
 /**
  * Initializes
  * @param  {object} comp
  * @return {object}
  */
-function init(comp) {
+const init/* :: :Init */ = (comp) => {
     // Lets remove any width, height and viewbox
-    var rawTmpl = comp.rawTmpl
+    const rawTmpl = comp.rawTmpl
         .replace(/ width="([^"]+)"/g, '')
         .replace(/ height="([^"]+)"/g, '')
         .replace(/ viewBox="([^"]+)"/g, '')
@@ -37,17 +34,18 @@ function init(comp) {
     comp.rawTmpl = doT.template(rawTmpl);
 
     return comp;
-}
+};
 
 // -------------------------------------------
 // EXPORT
 
-module.exports = {
-    init: function (el, data) {
-        var comp = component.getComp(data, DEFAULTS);
+export default {
+    init: (el, data) => {
+        let comp = component.getComp(data, DEFAULTS);
         comp = component.init(el, comp);
-        return init(comp);
+
+        return (!el || !el.length) ? comp : init(comp);
     },
-    render: render,
+    render,
     destroy: component.destroy
 };
