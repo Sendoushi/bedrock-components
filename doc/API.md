@@ -4,11 +4,10 @@ Sorry... Still have to complete this better!
 
 ### List of provided components
 
-- [accordion](src/components/accordion.js)
-- [completer](src/components/completer.js)
-- [modal](src/components/modal.js)
-- [select](src/components/select.js)
-
-#### List of provided components utils
-
-- [outdatedbrowser](src/utils/outdatedbrowser.js)
+- [accordion](src/accordion.js)
+- [completer](src/completer.js)
+- [icons](src/icons.js)
+- [modal](src/modal.js)
+- [outdatedbrowser](src/outdatedbrowser.js)
+- [scrollspy](src/scrollspy.js)
+- [select](src/select.js)

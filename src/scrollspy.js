@@ -71,7 +71,7 @@ const onScroll = (comp) => {
  * @returns
  */
 const scrollToTarget = (comp, target, isDone) => {
-    const block = comp.els.items.filter(target);
+    const block = comp.els.items.filter(target).filter(':visible');
     let top;
 
     // Find the right block

@@ -1,4 +1,18 @@
 {
     "presets": ["es2015"],
-    "plugins": ["syntax-flow", "transform-flow-comments", "transform-flow-strip-types"]
+    "plugins": [],
+    "env": {
+        "test": {},
+        "dev": {},
+        "staging": {
+            "plugins": [
+                ["transform-es2015-classes"]
+            ]
+        },
+        "production": {
+            "plugins": [
+                ["transform-es2015-classes"]
+            ]
+        }
+    }
 }

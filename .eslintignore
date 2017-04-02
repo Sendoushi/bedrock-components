@@ -10,5 +10,4 @@ vendor
 build/*
 dist/*
 
-*.flow.js
 outdatedbrowser.js

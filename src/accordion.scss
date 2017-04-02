@@ -18,14 +18,10 @@
 
     .accordion__anchor {
         .icon__wrapper {
-            width: 100%;
-            height: 100%;
+            vertical-align: top;
         }
 
         .icon {
-            position: absolute;
-            top: calc(50% - #{$icon-size} / 2);
-            right: 0;
             width: $icon-size;
             height: $icon-size;
 
@@ -34,22 +30,26 @@
             }
         }
 
-        .icon---minus {
+        .icon--minus,
+        .icon--minus--b {
             display: block;
         }
 
-        .icon--plus {
+        .icon--plus,
+        .icon--plus--b {
             display: none;
         }
     }
 
     &.is-out {
         .accordion__anchor {
-            .icon--minus {
+            .icon--minus,
+            .icon--minus--b {
                 display: none;
             }
 
-            .icon--plus {
+            .icon--plus,
+            .icon--plus--b {
                 display: block;
             }
         }
@@ -123,3 +123,40 @@
         }
     }
 }
+
+@include accordion-resp(0.8rem, 0.8rem, currentColor, 0.8rem);
+
+@mixin accordion--a() {
+    padding: 1.533rem 0;
+
+    .accordion__anchor {
+        top: 1.5333rem;
+
+        .icon {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    }
+
+    .accordion__content {
+        padding-top: 0.666rem;
+    }
+}
+
+.accordion.accordion--a {
+    @include accordion--a();
+}
+
+.accordion--tablet.accordion--a {
+    @include breakpoint(medium) {
+        @include accordion--a();
+    }
+}
+
+.accordion--mobile.accordion--a {
+    @include breakpoint(small) {
+        @include accordion--a();
+    }
+}
+
