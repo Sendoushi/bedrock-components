@@ -1,9 +1,7 @@
 'use strict';
-/* global Promise */
-// TODO: We should convert this better
 
 import $ from 'jquery';
-import component from 'bedrock/src/component.js';
+import { Component as Comp } from 'bedrock2/src/component/jquery.js';
 
 const DEFAULTS = {
     targetClose: null,
@@ -23,42 +21,22 @@ const DEFAULTS = {
     }
 };
 
-require('es6-promise').polyfill();
-
 // --------------------------------
 // Functions
-
-/**
- * Gets wrapper
- * @param  {element} el
- * @return {element}
- */
-const getWrap = (el) => el.closest(`.${DEFAULTS.classes.wrap}`);
 
 /**
  * Gets options from element
  * @param  {element} el
  * @return {array}
  */
-const getOptions = (el) => {
-    const optionsEl = el.find('option');
+const getOptions = el => {
     const options = [];
 
-    // Lets retrieve the options
-    optionsEl.each(() => {
-        const optionVal = $(this).attr('value');
-        const optionName = $(this).text();
-
-        // We need value
-        if (!optionVal || optionVal === '') {
-            return;
-        }
-
-        // Now lets cache it
-        options.push({ val: optionVal, name: optionName });
+    el.find('option').each((i, val) => {
+        options.push({ val: val.getAttribute('value'), name: val.textContent });
     });
 
-    return options;
+    return options.filter(val => val.val && val.val !== '');
 };
 
 /**
@@ -111,6 +89,7 @@ const tmplOptions = (opts) => opts.map(
  * @return {jquery}
  */
 const setLayout = (el) => {
+    const type = el[0].getAttribute('data-type') || 'a';
     const hasError = el.hasClass(DEFAULTS.classes.error);
     const parent = el.parent();
     const placeholder = getPlaceholder(el);
@@ -124,6 +103,7 @@ const setLayout = (el) => {
 
     el.addClass(DEFAULTS.classes.set);
     const newEl = el.closest(`.${DEFAULTS.classes.wrap}`);
+    newEl.attr('data-type', type);
 
     hasError && el.addClass(DEFAULTS.classes.error);
 
@@ -148,217 +128,195 @@ const open = (el) => el.addClass(DEFAULTS.classes.active);
  * Close select
  * @param  {jquery} el
  */
-const close = (el) => { el.removeClass(DEFAULTS.classes.active); }
-
-/**
- * Sets value
- * @param  {jquery} el
- * @param  {string} val
- * @param  {boolean} isFirst
- * @param  {boolean} force
- */
-const setValue = (el, val, isFirst, force) => {
-    const valEl = el.find(`.${DEFAULTS.classes.value}`);
-    const item = el.find(`li[data-value="${val}"]`).first();
-    let itemText = item.text();
-    const selectEl = el.find('select');
-    const hasSelected = selectEl.attr('data-selected');
-    const selectEmpty = selectEl.attr('data-empty') || '';
-    const oldVal = selectEl.val();
-
-    // Force existence on val
-    val = val || '';
-
-    // Check if it should be a placeholder
-    if (selectEmpty.length && selectEmpty === val && !hasSelected && isFirst) {
-        val = '';
-        itemText = '';
-    }
-
-    // Maybe we don't need to go further
-    if (oldVal === val && !isFirst && !force) {
-        return;
-    }
-
-    valEl.attr('data-value', val);
-    valEl.attr('data-text', itemText);
-    valEl.text(itemText);
-
-    if (!val || val === '' || !itemText || itemText === '') {
-        el.removeClass(DEFAULTS.classes.isSet);
-    } else {
-        el.addClass(DEFAULTS.classes.isSet);
-    }
-
-    // Select the right option
-    selectEl.attr('data-value', val);
-    selectEl.val(val);
-    !isFirst && selectEl.trigger(DEFAULTS.events.change);
-};
-
-/**
- * Sets value empty
- * @param {jquery} el
- */
-const setEmpty = (el) => setValue(el, '', false, true);
-
-/**
- * Select click handler
- * @param  {object} comp
- * @param  {event} evt
- */
-const onSelectClick = (comp, evt) => {
-    evt.stopPropagation();
-
-    // Close all others
-    comp.all && comp.all.filter(`.${DEFAULTS.classes.set}`).each(function () {
-        const wrapper = $(this).closest(DEFAULTS.classes.wrap);
-
-        if (!wrapper.is(comp.newEl)) {
-            close(wrapper);
-        }
-    });
-
-    // Lets check the one
-    if (!comp.newEl.hasClass(DEFAULTS.classes.active)) {
-        open(comp.newEl);
-    } else {
-        close(comp.newEl);
-    }
-};
-
-/**
- * Item click handler
- * @param  {object} comp
- * @param  {event} evt
- */
-const onItemClick = (comp, evt) => {
-    const clickVal = $(evt.currentTarget).attr('data-value');
-
-    // Set values an close
-    setValue(comp.newEl, clickVal);
-    close(comp.newEl);
-};
-
-/**
- * Sets events in the element
- * @param  {object} comp
- */
-const setEvents = (comp) => {
-    const el = comp.newEl;
-    const valEl = el.find(`.${DEFAULTS.classes.value}`);
-    const listItems = el.find('li');
-
-    // Off other events
-    valEl.off('click');
-    listItems.off('click');
-    $(document).off('click.select');
-
-    // Set event to open and close
-    valEl.on('click', onSelectClick.bind(null, comp));
-
-    // Takes care of click on the list
-    listItems.on('click', onItemClick.bind(null, comp));
-
-    // Hides the list when clicking outside of it
-    $(document).on('click', close.bind(null, el));
-};
-
-/**
- * Update data
- * @param  {element} el
- * @param  {element} newEl
- */
-const updateData = (el, newEl) => {
-    const ulEl = newEl.find(`.${DEFAULTS.classes.options}`);
-    const placeholderEl = newEl.find(`.${DEFAULTS.classes.placeholder}`);
-    const placeholder = getPlaceholder(newEl);
-    const layoutTmpl = tmplOptions(getOptions(newEl));
-    const selectValue = getInitialValue(el);
-
-    ulEl.html(layoutTmpl);
-    placeholderEl.html(placeholder);
-
-    // Set events
-    // TODO: This shouldn't be like this! It should be a comp!
-    setEvents({ el, newEl });
-
-    // Set values
-    setValue(newEl, selectValue, true);
-};
-
-/**
- * Destroy
- * @param  {element} el
- * @param  {element} newEl
- */
-const destroy = (el, newEl) => {
-    const placeholderEl = newEl.find(`.${DEFAULTS.classes.placeholder}`);
-    const valueEl = newEl.find(`.${DEFAULTS.classes.value}`);
-    const optionsEl = newEl.find(`.${DEFAULTS.classes.options}`);
-
-    placeholderEl.remove();
-    valueEl.remove();
-    optionsEl.remove();
-    el.unwrap(`.${DEFAULTS.classes.wrap}`);
-
-    // TODO: ...
-    // component.destroy(comp);
-};
-
-/**
- * Creates a custom select
- * @param  {object} comp
- * @return {object}
-*/
-const init = (comp) => {
-    const targetClose = comp.targetClose;
-    const selectValue = getInitialValue(comp.el);
-
-    // Cache for later use
-    comp.all = !!targetClose ? $(targetClose) : null;
-    comp.newEl = setLayout(comp.el);
-
-    // Set events
-    setEvents(comp);
-
-    // Set values
-    setValue(comp.newEl, selectValue, true);
-
-    return comp;
-};
+const close = (el) => { el.removeClass(DEFAULTS.classes.active); };
 
 // --------------------------------
-// Exports
+// Class
 
-export default {
-    init: (el, data) => {
-        let comp = component.getComp(data, DEFAULTS);
-        comp = component.init(el, comp);
-        return init(comp);
-    },
-    open: (el) => {
-        const newEl = getWrap(el);
-        newEl.length && open(newEl);
-    },
-    close: (el) => {
-        const newEl = getWrap(el);
-        newEl.length && close(newEl);
-    },
-    setValue: (el, val) => {
-        const newEl = getWrap(el);
-        newEl.length && setValue(newEl, val);
-    },
-    setEmpty: (el) => {
-        const newEl = getWrap(el);
-        newEl.length && setEmpty(newEl);
-    },
-    updateData: (el) => {
-        const newEl = getWrap(el);
-        newEl.length && updateData(el, newEl);
-    },
-    destroy: (el) => {
-        const newEl = getWrap(el);
-        newEl.length && destroy(el, newEl);
+class Component extends Comp {
+    // Constructor
+    constructor($el, data = {}) {
+        $el = $el instanceof $ ? $el : $($el);
+
+        super($el, { noRender: true, tmpl: '' });
+
+        // Cache for later use
+        if (data.targetClose) {
+            this._$els.all = data.targetClose instanceof $ ? data.targetClose : $(data.targetClose);
+        }
+        this._$els.newEl = setLayout(this._$el);
+        this._cacheEls();
+
+        // Set values
+        this._id = Math.random() * 100000;
+        const selectValue = getInitialValue(this._$el);
+        this.setValue(selectValue, true);
+
+        this._addEvents();
     }
-};
+
+    /**
+     * Update data
+     */
+    updateData() {
+        const ulEl = this._$els.newEl.find(`.${DEFAULTS.classes.options}`);
+        const placeholderEl = this._$els.newEl.find(`.${DEFAULTS.classes.placeholder}`);
+        const placeholder = getPlaceholder(this._$els.newEl);
+        const layoutTmpl = tmplOptions(getOptions(this._$els.newEl));
+        const selectValue = getInitialValue(this._$el);
+
+        ulEl.html(layoutTmpl);
+        placeholderEl.html(placeholder);
+
+        this._addEvents();
+        this.setValue(selectValue, true);
+
+        return this;
+    }
+
+    /**
+     * Sets value
+     * @param  {string} val
+     * @param  {boolean} isFirst
+     * @param  {boolean} force
+     */
+    setValue(val = '', isFirst = false, force = false) {
+        const valEl = this._$els.newEl.find(`.${DEFAULTS.classes.value}`);
+        const item = this._$els.newEl.find(`li[data-value="${val}"]`).first();
+        let itemText = item.text();
+        const selectEl = this._$els.newEl.find('select');
+        const hasSelected = selectEl.attr('data-selected');
+        const selectEmpty = selectEl.attr('data-empty') || '';
+        const oldVal = selectEl.val();
+
+        // Check if it should be a placeholder
+        if (selectEmpty.length && selectEmpty === val && !hasSelected && isFirst) {
+            val = '';
+            itemText = '';
+        }
+
+        // Maybe we don't need to go further
+        if (oldVal === val && !isFirst && !force) {
+            return;
+        }
+
+        valEl.attr('data-value', val);
+        valEl.attr('data-text', itemText);
+        valEl.text(itemText);
+
+        if (!val || val === '' || !itemText || itemText === '') {
+            this._$els.newEl.removeClass(DEFAULTS.classes.isSet);
+        } else {
+            this._$els.newEl.addClass(DEFAULTS.classes.isSet);
+        }
+
+        // Select the right option
+        selectEl.attr('data-value', val);
+        selectEl.val(val);
+        !isFirst && selectEl.trigger(DEFAULTS.events.change);
+    }
+
+    /**
+     * Sets value empty
+     */
+    setEmpty() { this.setValue('', false, true); }
+
+    /**
+     * Open select
+     */
+    open() { open(this._$els.newEl); }
+
+    /**
+     * Close select
+     */
+    close() { close(this._$els.newEl); }
+
+    /**
+     * Destroy
+     */
+    destroy() {
+        // Off events
+        this._rmEvents();
+
+        // Lets get the old layout here...
+        const placeholderEl = this._$els.newEl.find(`.${DEFAULTS.classes.placeholder}`);
+        const valueEl = this._$els.newEl.find(`.${DEFAULTS.classes.value}`);
+        const optionsEl = this._$els.newEl.find(`.${DEFAULTS.classes.options}`);
+
+        placeholderEl.remove();
+        valueEl.remove();
+        optionsEl.remove();
+        this._$el.unwrap(`.${DEFAULTS.classes.wrap}`);
+
+        super.destroy();
+
+        return this;
+    }
+
+    // -----------------------------------------
+
+    // _cacheEls
+    _cacheEls() {
+        this._$els.valEl = this._$els.newEl.find(`.${DEFAULTS.classes.value}`);
+        this._$els.listItems = this._$els.newEl.find('li');
+    }
+
+    // _addEvents
+    _addEvents() {
+        this._rmEvents();
+
+        // Add events
+        this._$els.valEl.on('click.select', this._onSelectClick.bind(this));
+        this._$els.listItems.on('click.select', this._onItemClick.bind(this));
+        $(document.body).on(`click.select-${this._id}`, close.bind(null, this._$els.newEl));
+    }
+
+    // _rmEvents
+    _rmEvents() {
+        // Off events
+        this._$els.valEl.off('click.select');
+        this._$els.listItems.off('click.select');
+        $(document.body).off(`click.select-${this._id}`);
+    }
+
+    /**
+     * Select click handler
+     * @param  {event} evt
+     */
+    _onSelectClick(evt) {
+        const el = this._$el;
+        const newEl = this._$els.newEl;
+
+        evt.stopPropagation();
+
+
+        // Close all others
+        this._$els.all && this._$els.all.each(function () {
+            const elToClose = $(this);
+            if (!elToClose.is(el)) {
+                close(elToClose.closest(`.${DEFAULTS.classes.wrap}`));
+            }
+        });
+
+        // Lets check the one
+        if (!newEl.hasClass(DEFAULTS.classes.active)) {
+            this.open();
+        } else {
+            this.close();
+        }
+    }
+
+    /**
+     * Item click handler
+     * @param  {event} evt
+     */
+    _onItemClick(evt) {
+        const clickVal = $(evt.currentTarget).attr('data-value');
+
+        // Set values an close
+        this.setValue(clickVal);
+        this.close();
+    }
+}
+
+export { Component };

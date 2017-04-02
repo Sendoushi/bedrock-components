@@ -9,7 +9,7 @@ The api documentation is **[here](doc/API.md)**.
 
 ## Examples of installation
 ```
-npm install --save git://github.com/Sendoushi/bedrock-components.git#0.0.3
+npm install --save bedrock-components
 ```
 
 ## Styleguide

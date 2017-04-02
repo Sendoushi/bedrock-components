@@ -1,7 +1,8 @@
 'use strict';
 
 import $ from 'jquery';
-import { Component as Comp } from 'bedrock/src/component/jquery.js';
+import is from './is.js';
+import { Component as Comp } from 'bedrock2/src/component/jquery.js';
 
 // --------------------------------
 // Class
@@ -14,11 +15,13 @@ class Component extends Comp {
         super($el, { noRender: true, tmpl: '' });
 
         // Cache data
+        this._$els = this._$els || {};
+        this._comps = this._comps || {};
         this._all = data.targetClose || null;
 
         // Cache elements
-        this._$els.anchor = this._$el.find('.accordion__anchor');
-        this._$els.content = this._$el.find('.accordion__content');
+        this._$els.anchor = $el.find('.accordion__anchor');
+        this._$els.content = $el.find('.accordion__content');
 
         // Force to remove the height
         this._$els.content.removeAttr('style');
@@ -27,7 +30,7 @@ class Component extends Comp {
         !this.isOpen() && this.close();
 
         // Add events
-        this._$el.on('close.accordion', this.close.bind(this));
+        $el.on('close.accordion', this.close.bind(this));
         this._$els.anchor.on('click.accordion', this._onHandleClick.bind(this));
         $(window).on('resize.accordion', this._onResize.bind(this));
     }
@@ -117,14 +120,17 @@ class Component extends Comp {
      * @param {event} evt
      */
     _onResize() {
+        // Ios resizes on scroll and there are actually no resizes
+        if (is.ios() || is.android() || is.media('mobile') || is.mobile()) { return; }
+
         this._throttler && clearTimeout(this._throttler);
         this._throttler = setTimeout(() => window.requestAnimationFrame(() => {
-            this._$el.removeAttr('data-height');
-
             // No need to go further if it wasn't open
             if (!this.isOpen()) {
                 return;
             }
+
+            this._$el.removeAttr('data-height');
 
             // Lets reset
             this.close();
@@ -138,6 +144,11 @@ class Component extends Comp {
      * @return {number}
      */
     _findHeight(force) {
+        // Ios is a special case, because of its optimizations
+        if (is.ios() || is.android() || is.media('mobile') || is.mobile()) {
+            return 10000;
+        }
+
         const oldOut = this._$el.hasClass('is-out');
         let height = this._$el.attr('data-height');
 

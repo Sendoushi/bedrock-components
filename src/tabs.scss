@@ -1,0 +1,9 @@
+@mixin tabs() {
+    .tabs__content {
+        display: none;
+
+        &.is-active {
+            display: block;
+        }
+    }
+}

@@ -1,4 +1,4 @@
-@mixin select-options($padding: 5px, $border: 1px solid currentColor, $background: transparent, $text-color: currentColor) {
+@mixin select-options($padding: 3px, $border: 1px solid currentColor, $background: transparent, $text-color: currentColor) {
     .select__options {
         display: none;
         position: absolute;
@@ -60,14 +60,29 @@
     }
 
     .select__value {
+        &::before,
         &::after {
-            content: "»";
+            content: "";
             position: absolute;
             display: block;
-            top: calc(50% - #{$padding} / 2 + 1px);
-            right: $padding;
-            font-size: $padding;
-            transform: rotate(90deg);
+        }
+
+        &::before {
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 2.25rem;
+            border-left: 1px solid $color-neutral-75;
+        }
+
+        &::after {
+            top: calc(50% - 3px);
+            right: 0.75rem;
+            height: 0;
+            width: 0;
+            border-style: solid;
+            border-width: 8px 6px 0;
+            border-color: $color-primary-50 transparent transparent transparent;
         }
     }
 }

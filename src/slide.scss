@@ -1,0 +1,22 @@
+@import "./libs/slick.scss";
+
+.slick-list,
+.slick-track {
+    height: 100%;
+}
+
+.slick-track {
+    font-size: 0;
+
+    &::before {
+        content: "";
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+    }
+}
+
+.slick-slide {
+    height: 100%;
+    font-size: 1rem;
+}

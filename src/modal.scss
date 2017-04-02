@@ -1,19 +1,23 @@
-@mixin modal($close-size: 1em, $close-color: currentColor, $animation-time: 0.15s, $animation-ease: ease-out) {
+@mixin modal($color-high, $color-low) {
+    display: none;
     position: relative;
     top: 0;
     left: 0;
     right: 0;
-    opacity: 0;
-    transition: opacity $animation-time $animation-ease;
+    bottom: 0;
     pointer-events: none;
     text-align: center;
 
     &.is-in {
+        display: block;
         position: fixed;
-        bottom: 0;
-        opacity: 1;
         pointer-events: auto;
         z-index: 1000;
+    }
+
+    .modal__type {
+        height: 100%;
+        background: rgba($color-high, 0.5);
     }
 
     .modal__content {
@@ -21,21 +25,35 @@
     }
 
     .modal__close {
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 10;
         cursor: pointer;
 
         .icon__wrapper {
-            .icon {
-                width: $close-size;
-                height: $close-size;
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            z-index: 10;
+        }
+    }
 
-                > * {
-                    fill: $close-color;
-                }
-            }
+    .modal__default .modal__content {
+        width: 100%;
+        padding: 1.333rem;
+        background: rgba($color-high, 0.95);
+        box-shadow: 0 0 40px 0 rgba($color-low, 0.25);
+        color: $color-low;
+        border: 2px solid $color-low;
+    }
+
+    .modal__video,
+    .modal__gallery {
+        text-align: center;
+        background: rgba($color-low, 0.75);
+
+        .modal__content {
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: $color-high;
         }
     }
 }

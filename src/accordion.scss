@@ -87,18 +87,18 @@
         .accordion__anchor {
             display: none;
 
-            @include breakpoint(medium) {
+            @include breakpoint(large) {
                 display: block;
             }
         }
 
         .accordion__content {
-            @include breakpoint(medium, "at-least") {
-                max-height: none !important;
+            @include breakpoint(large, "at-least") {
+                max-height: none;
             }
         }
 
-        @include breakpoint(medium) {
+        @include breakpoint(large) {
             @include accordion($anchor-width, $anchor-height, $anchor-icon-color, $anchor-icon-size, $animation-time, $animation-ease);
         }
     }
@@ -114,7 +114,7 @@
 
         .accordion__content {
             @include breakpoint(small, "at-least") {
-                max-height: none !important;
+                max-height: none;
             }
         }
 
@@ -123,40 +123,3 @@
         }
     }
 }
-
-@include accordion-resp(0.8rem, 0.8rem, currentColor, 0.8rem);
-
-@mixin accordion--a() {
-    padding: 1.533rem 0;
-
-    .accordion__anchor {
-        top: 1.5333rem;
-
-        .icon {
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
-    }
-
-    .accordion__content {
-        padding-top: 0.666rem;
-    }
-}
-
-.accordion.accordion--a {
-    @include accordion--a();
-}
-
-.accordion--tablet.accordion--a {
-    @include breakpoint(medium) {
-        @include accordion--a();
-    }
-}
-
-.accordion--mobile.accordion--a {
-    @include breakpoint(small) {
-        @include accordion--a();
-    }
-}
-

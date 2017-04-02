@@ -1,123 +1,127 @@
 'use strict';
 
-/* @aflow */
-/* ::
-import type {CompData, Close, Open} from './_test/modal.flow.js'
-*/
-
 import $ from 'jquery';
-import template from 'lodash/template.js';
-import { Component as Comp } from 'bedrock/src/component/jquery.js';
-import mailbox from 'bedrock/src/mailbox.js';
-import defaultTmpl from './_assets/modal.html';
+import { Component as Comp } from 'bedrock2/src/component/jquery.js';
 
-// -----------------------------------------
-// Functions
+// --------------------------------
+// Variables / Functions
 
 /**
- * Close
+ * Gets default content template
  *
- * @param {element} $el
- * @param {object} $els
- * @param {object} classes
- * @param {event} evt
+ * @param {object} data
+ * @returns {string}
  */
-const close = ($el, $els, classes, evt) => {
-    evt && evt.preventDefault();
+const defaultContentTmpl = (data = {}) => {
+    const title = data.title && `<div class="h3 modal__title">${data.title}</div>` || '';
+    const caption = data.caption && `<div class="ss-b-rg modal__caption">${data.caption}</div>` || '';
+    const paragraph = data.paragraph && `<div class="modal__paragraph">${data.paragraph}</div>` || '';
+    const tmpl = data.contentTmpl || (title + caption + paragraph);
 
-    for (let i = 0; i < $el.length; i += 1) {
-        $el[i].className = $el[i].className.replace(classes.active, '');
-    }
-
-    for (let i = 0; i < $els.scroll.length; i += 1) {
-        $els.scroll[i].className = $els.scroll[i].className.replace(classes.disableScroll, '');
-    }
+    return tmpl;
 };
 
 /**
- * Open
- * @param {element} $el
- * @param {object} $els
- * @param {object} classes
+ * Gets default template
+ *
+ * @param {object} data
+ * @returns {string}
  */
-const open = ($el, $els, classes) => {
-    for (let i = 0; i < $el.length; i += 1) {
-        $el[i].className += ` ${classes.active}`;
-    }
+const defaultTmpl = (data = {}) => `
+    <div class="modal__type ${data.class || ''}">
+        <div class="align-middle__wrapper">
+            <div class="align-middle wrapper">
+                <div class="modal__content">
+                    <span class="icon__wrapper icon__wrapper--cross modal__close">
+                        <svg class="icon icon--cross"><use xlink:href="#icon-cross"></use></svg>
+                    </span>
+                    ${data.contentFn && data.contentFn(data) || defaultContentTmpl(data)}
+                </div>
+            </div>
+        </div>
+    </div>
+`;
 
-    for (let i = 0; i < $els.scroll.length; i += 1) {
-        $els.scroll[i].className += ` ${classes.disableScroll}`;
-    }
-};
+/**
+ * Gets data from element
+ *
+ * @param {element} el
+ * @returns {object}
+ */
+const getData = (el) => ({
+    class: el.getAttribute('data-class'),
+    contentTmpl: el.getAttribute('data-content'),
+    title: el.getAttribute('data-title'),
+    caption: el.getAttribute('data-caption'),
+    paragraph: el.getAttribute('data-paragraph')
+});
 
 // --------------------------------
 // Class
 
 class Component extends Comp {
     // Constructor
-    constructor($el/* :: :?jQueryElement */, data/* :: :CompData */ = {}) {
-        const templateOptions = { interpolate: /{{([\s\S]+?)}}/g };
+    constructor($el, data = {}) {
+        $el = $el instanceof $ ? $el : $($el);
 
-        // Now the extension...
-        super($el, {
-            els: data.els,
-            tmpl: typeof data.tmpl === undefined ? template(defaultTmpl, templateOptions) : data.tmpl,
-            render: data.render,
-            comps: data.comps,
-            state: data.state
-        });
+        super($el, { noRender: true, tmpl: '' });
 
-        // Set DEFAULTS
-        this._scrollEl = data.scrollEl || $(document.body);
-        this._classes = {
-            disableScroll: 'disable-scroll',
-            active: 'is-in',
-            closeButton: 'modal__close',
-            ...(data.classes || {})
-        };
+        // Set defaults
+        data.tmpl = data.tmpl || defaultTmpl;
+        data.class = data.class || 'modal__default';
 
-        this._events = {
-            in: 'modal.in',
-            out: 'modal.out',
-            clickClose: 'click.modal',
-            ...(data.events || {})
-        };
+        // Lets render
+        this.render(data);
     }
 
-    // Render
-    render() {
-        const onOpenBound = open.bind(null, this._$el, this._$els, this._classes);
-        const onCloseBound = close.bind(null, this._$el, this._$els, this._classes);
+    /**
+     * Renders
+     */
+    render(data) {
+        // Lets build the modal
+        const tmpl = data.tmpl(data);
 
-        // Destroy old stuff
-        this.destroy();
+        // Render it out...
+        this._$el.html(tmpl);
 
-        // Render it out... Possibly again
-        super.render();
+        // Cache elements
+        this._$els.content = this._$el.find('.modal__content');
+        this._$els.close = this._$el.find('.modal__close');
 
-        // Lets cache elements
-        this._$els.close = this._$el.find(`.${this._classes.closeButton}`);
+        // Now lets open the modal...
+        this._$el[0].classList.add('is-in');
+        document.body.classList.add('disable-scroll');
 
-        // Set new events
-        this._mbIn = mailbox.on(this._events.in, onOpenBound);
-        this._mbOut = mailbox.on(this._events.out, onCloseBound);
-        this._$el.on(this._events.in, onOpenBound);
-        this._$el.on(this._events.out, onCloseBound);
+        // Add events
+        this._$el.on('click', evt => {
+            evt.preventDefault();
+            this.destroy();
+        });
+        this._$els.close.on('click', evt => {
+            evt.preventDefault();
+            this.destroy();
+        });
+        this._$els.content.on('click', evt => evt.stopPropagation());
 
         return this;
     }
 
-    // Destroy
+    /**
+     * Destroy
+     */
     destroy() {
-        this._mbIn && mailbox.off(this._events.in, this._mbIn);
-        this._mbOut && mailbox.off(this._events.out, this._mbOut);
-        this._$el.off(this._events.in);
-        this._$el.off(this._events.out);
-        this._$els.close && this._$els.close.off(this._events.clickClose);
+        this._$el[0].classList.remove('is-in');
+        document.body.classList.remove('disable-scroll');
+        this._$el.html('');
 
+        // Finally destroy the component
         super.destroy();
 
         return this;
     }
+
+    // -----------------------------------------
 }
+
 export { Component };
+export { getData };
